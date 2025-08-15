@@ -596,7 +596,7 @@ class Heroku:
 
         return False
 
-    async def _phone_login(self, client: CustomTelegramClient) -> bool:
+    async def _phone_login(self, client: CustomTelegramClient, test_server: bool = False) -> bool:
         phone = input(
             "\033[0;96mEnter phone: \033[0m"
             if self.arguments.tty
@@ -605,6 +605,19 @@ class Heroku:
 
         await client.start(phone)
 
+        if hasattr(client, "tg_id"):
+            telegram_id = client.tg_id
+        else:
+            if not (me := await client.get_me()): return
+
+            telegram_id = me.id
+            client._tg_id = telegram_id
+            client.tg_id = telegram_id
+            client.heroku_me = me
+        
+        db = database.Database(client)
+        await db.init()
+        db.set(__name__, "test_server", test_server)
         await self.save_client_session(client)
         self.clients += [client]
         return True
@@ -628,6 +641,16 @@ class Heroku:
                 lang_code="en",
                 system_lang_code="en-US",
             )
+            test = input(
+                "\033[0;96mDo you want to connect to the test server? [y/N]: \033[0m"
+                if self.arguments.tty
+                else "Do you want to connect to the test server? [y/N]: ").lower() == "y"
+            if test:
+                client.session.set_dc(
+                    dc_id=2,
+                    server_address='149.154.167.40',
+                    port=443,
+                )
             await client.connect()
 
             print(
@@ -647,7 +670,7 @@ class Heroku:
                 ).lower()
                 != "y"
             ):
-                return await self._phone_login(client)
+                return await self._phone_login(client, test_server=test)
 
             print("\033[0;96mLoading QR code...\033[0m")
             qr_login = await client.qr_login()
