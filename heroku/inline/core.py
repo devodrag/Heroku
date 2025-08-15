@@ -28,6 +28,7 @@ from herokutl.tl.types import Message
 from herokutl.utils import get_display_name
 
 from .. import utils
+from .. import main
 from ..database import Database
 from ..tl_cache import CustomTelegramClient
 from ..translations import Translator
