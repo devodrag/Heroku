@@ -129,7 +129,19 @@ class InlineManager(
 
         self.init_complete = True
 
-        self.bot = Bot(token=self._token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+        if self._db.get(main.__name__, "test_server", False):
+            logger.info("Ставлю тестовый серв")
+            sesion = AiohttpSession(
+                api=TEST
+            )
+        else:
+            logger.info("Ставлю продакшн серв")
+            sesion = AiohttpSession(
+                api=PRODUCTION
+            )
+
+        self.bot = Bot(token=self._token, session=sesion, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+
         self._bot = self.bot
         self._dp = Dispatcher()
 
