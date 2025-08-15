@@ -1,5 +1,5 @@
-FROM python:3.10 AS python-base
-FROM python-base AS builder-base
+FROM python:3.10 as python-base
+FROM python-base as builder-base
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -45,9 +45,11 @@ RUN mkdir /data/private
 
 RUN git clone https://github.com/coddrago/Heroku /data/Heroku
 WORKDIR /data/Heroku
-RUN git fetch && git checkout master && git pull
 
 RUN pip install --no-warn-script-location --no-cache-dir -U -r requirements.txt
+RUN pip install --no-warn-script-location --no-cache-dir -U -r optional_requirements.txt
+
+RUN git reset --hard
 
 EXPOSE 8080
-CMD ["python", "-m", "heroku", "--root"]
+CMD python -m heroku --root

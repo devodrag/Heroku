@@ -5,16 +5,8 @@
 - fixed bug with presets command
 - added structure for windows and MacOS
 - added blockquote for all lists
-- updated all banners and avatars
+- added new banner for update
 - added ubguard.codrago.life
-- added /profile command in inline bot
-- added restart button on "requirements installed"
-- removed cloudflare from weburl
-- update dockerfile
-- update heroku-tl to 1.1.3
-- fixed error with "method not mounted"
-- added log "aiogram sleep" to ignore filter
-- 
 
 ## 🪐 Heroku 1.7.0
 
